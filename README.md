@@ -19,7 +19,7 @@ An audio signal was distorted with noise and interference. The objective was to 
 
 ##  Results
 
-###  Noisy Signal (Time Domain)
+###  Noisy Signal (Time Domain Representation)
 
 ![Noisy Signal](noisy.png)
 
