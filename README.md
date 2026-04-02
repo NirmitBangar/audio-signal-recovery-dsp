@@ -2,26 +2,26 @@
 
 ##  Problem Statement
 
-An audio signal was heavily distorted and noisy. The objective was to recover the original embedded audio using signal processing techniques.
+An audio signal was distorted with noise and interference. The objective was to recover the original signal using digital signal processing techniques.
 
 ---
 
-##  Method
+##  Methodology
 
 1. Loaded the noisy audio signal
-2. Converted it into frequency domain using FFT
-3. Observed frequency spectrum to identify noise
-4. Designed a Butterworth Low Pass Filter
-5. Applied filter to remove unwanted frequencies
-6. Reconstructed clean signal
+2. Converted signal into frequency domain using FFT
+3. Analyzed spectrum to identify noise components
+4. Designed Butterworth Low Pass Filter
+5. Applied filter to remove high-frequency noise
+6. Reconstructed clean signal using inverse transform
 
 ---
 
 ##  Results
 
-###  Noisy Signal
+###  Noisy Signal (Time Domain)
 
-![Noisy](noisy.png)
+![Noisy Signal](noisy.png)
 
 ###  Frequency Spectrum
 
@@ -42,18 +42,18 @@ An audio signal was heavily distorted and noisy. The objective was to recover th
 
 ##  Observations
 
-* Noise was dominant in high-frequency region
-* Filtering reduced noise significantly
-* Slight smoothing observed due to filtering
+* Noise was concentrated in high-frequency region
+* Filtering successfully reduced noise
+* Slight smoothing observed after filtering
 
 ---
 
 ##  Conclusion
 
-This experiment demonstrates how frequency-domain analysis helps isolate noise and recover useful information effectively using DSP techniques.
+This experiment demonstrates how transforming signals into the frequency domain allows efficient noise removal and recovery of useful information.
 
 ---
 
-##  Note
+##  Additional Insight
 
-Multiple cutoff frequencies were tested experimentally to achieve the best balance between noise removal and signal clarity.
+Multiple cutoff frequencies were tested experimentally to achieve the best balance between noise reduction and signal clarity.
