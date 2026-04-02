@@ -45,6 +45,7 @@ An audio signal was distorted with noise and interference. The objective was to 
 * Noise was concentrated in high-frequency region
 * Filtering successfully reduced noise
 * Slight smoothing observed after filtering
+* FFT analysis revealed that noise was concentrated in higher frequency bands, which guided the choice of filter cutoff frequency.
 
 ---
 
