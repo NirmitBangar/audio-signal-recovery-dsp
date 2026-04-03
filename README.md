@@ -1,60 +1,118 @@
-# 🎧 Audio Signal Recovery using DSP
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.io import wavfile
+import soundfile as sf
+import os
 
-##  Problem Statement
+# ================================
+#  Setup folders
+# ================================
+os.makedirs("output", exist_ok=True)
+os.makedirs("plots", exist_ok=True)
 
-An audio signal was distorted with noise and interference. The objective was to recover the original signal using digital signal processing techniques.
+# ================================
+#  Load Audio
+# ================================
+fs, signal = wavfile.read("input.wav")
 
----
+# Normalize signal
+signal = signal / np.max(np.abs(signal))
 
-##  Methodo
+# ================================
+#  Plot Functions
+# ================================
+def plot_time(signal, fs, title, path):
+    t = np.arange(len(signal)) / fs
+    plt.figure()
+    plt.plot(t, signal)
+    plt.title(title)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude")
+    plt.savefig(path)
+    plt.close()
 
-1. Loaded the noisy audio signal
-2. Converted signal into frequency domain using FFT
-3. Analyzed spectrum to identify noise components
-4. Designed Butterworth Low Pass Filter
-5. Applied filter to remove high-frequency noise
-6. Reconstructed clean signal using inverse transform
+def plot_frequency(signal, fs, title, path):
+    X = np.fft.fft(signal)
+    freq = np.fft.fftfreq(len(signal), d=1/fs)
 
----
+    plt.figure()
+    plt.plot(freq, np.abs(X))
+    plt.title(title)
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Magnitude")
+    plt.savefig(path)
+    plt.close()
 
-##  Results
+def plot_spectrogram(signal, fs, title, path):
+    plt.figure()
+    plt.specgram(signal, Fs=fs)
+    plt.title(title)
+    plt.xlabel("Time")
+    plt.ylabel("Frequency")
+    plt.savefig(path)
+    plt.close()
 
-###  Noisy Signal (Time Domain Representation)
+# ================================
+#  FFT Analysis
+# ================================
+X = np.fft.fft(signal)
+freq = np.fft.fftfreq(len(signal), d=1/fs)
 
-![Noisy Signal](noisy.png)
+# ================================
+#  Low Pass Filter
+# ================================
+def low_pass_filter(signal, fs, cutoff):
+    X = np.fft.fft(signal)
+    freq = np.fft.fftfreq(len(signal), d=1/fs)
 
-###  Frequency Spectrum
+    H = np.abs(freq) < cutoff
+    Y = X * H
 
-![Spectrum](spectrum.png)
+    return np.real(np.fft.ifft(Y))
 
-###  Filtered Signal
+# ================================
+#  Wiener Filter
+# ================================
+def wiener_filter(signal, noise_estimate):
+    S = np.fft.fft(signal)
+    N = np.fft.fft(noise_estimate)
 
-![Filtered](filtered.png)
+    H = (np.abs(S)**2) / (np.abs(S)**2 + np.abs(N)**2 + 1e-10)
+    Y = S * H
 
----
+    return np.real(np.fft.ifft(Y))
 
-##  Output Audio
+# ================================
+#  BEFORE FILTERING
+# ================================
+plot_time(signal, fs, "Time Domain (Before)", "plots/time_before.png")
+plot_frequency(signal, fs, "Frequency Domain (Before)", "plots/freq_before.png")
+plot_spectrogram(signal, fs, "Spectrogram (Before)", "plots/spec_before.png")
 
-* Noisy audio → `noisy_audio.wav`
-* Clean audio → `clean_audio.wav`
+# ================================
+# ⚙️ Filtering Process
+# ================================
 
----
+# Step 1: Low-pass filtering
+cutoff = 4000  #  adjust based on your signal
+filtered_lp = low_pass_filter(signal, fs, cutoff)
 
-##  Observations
+# Step 2: Noise estimation
+noise_estimate = signal - filtered_lp
 
-* Noise was concentrated in high-frequency region
-* Filtering successfully reduced noise
-* Slight smoothing observed after filtering
-* FFT analysis revealed that noise was concentrated in higher frequency bands, which guided the choice of filter cutoff frequency.
+# Step 3: Wiener filtering
+filtered_final = wiener_filter(signal, noise_estimate)
 
----
+# ================================
+#  AFTER FILTERING
+# ================================
+plot_time(filtered_final, fs, "Time Domain (After)", "plots/time_after.png")
+plot_frequency(filtered_final, fs, "Frequency Domain (After)", "plots/freq_after.png")
+plot_spectrogram(filtered_final, fs, "Spectrogram (After)", "plots/spec_after.png")
 
-##  Conclusion
+# ================================
+#  Save Output
+# ================================
+sf.write("output/recovered.wav", filtered_final, fs)
 
-This experiment demonstrates how transforming signals into the frequency domain allows efficient noise removal and recovery of useful information.
-
----
-
-##  Additional Insight
-
-Multiple cutoff frequencies were tested experimentally to achieve the best balance between noise reduction and signal clarity.
+print(" Done! Check 'output/' and 'plots/' folders.")
