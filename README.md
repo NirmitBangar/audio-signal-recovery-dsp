@@ -6,7 +6,7 @@ An audio signal was distorted with noise and interference. The objective was to 
 
 ---
 
-##  Methodology
+##  Methodo
 
 1. Loaded the noisy audio signal
 2. Converted signal into frequency domain using FFT
